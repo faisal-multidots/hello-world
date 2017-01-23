@@ -1,0 +1,211 @@
+==============================================================
+//___USE everywhere - put in header.php
+==============================================================
+<?php
+//Custom Setting Fields...
+$site_data   = get_option('my_custom_blocks_option');
+
+$GLOBALS['site_phone']  = $site_data['co']['phone'];
+$GLOBALS['site_email']  = $site_data['co']['email'];
+$GLOBALS['site_address']= $site_data['co']['address'];
+
+$GLOBALS['site_facebook']   = $site_data['so']['fb'];
+$GLOBALS['site_twitter']    = $site_data['so']['tw'];
+$GLOBALS['site_linkedin']   = $site_data['so']['li'];
+$GLOBALS['site_instagram']  = $site_data['so']['ig'];
+$GLOBALS['site_pinterest']  = $site_data['so']['pin'];
+$GLOBALS['site_youtube']    = $site_data['so']['yt'];
+
+$GLOBALS['sitekey']  = $site_data['go']['sitekey'];
+$GLOBALS['secretkey']= $site_data['go']['secretkey'];
+
+?>
+==============================================================
+//functions.php
+==============================================================
+//__________________Custom Block Setting Page
+add_action( 'admin_menu', 'my_custom_block_menu' );
+function my_custom_block_menu(){
+
+	add_submenu_page( //second item (a subpage)
+		'edit.php?post_type=wysiwyg-widget',
+		'Custom Block Settings',
+		'Custom Blocks',
+		'manage_options',
+		'my_custom_blocks-page.php',
+		'my_custom_blocks'
+	);
+
+}
+
+add_action('admin_init', 'my_custom_block_setting');
+function my_custom_block_setting(){
+	register_setting('my_custom_block_settings_group_fields', 'my_custom_blocks_option');
+}
+
+function my_custom_blocks() {
+	if(function_exists( 'wp_enqueue_media' )){
+		wp_enqueue_media();
+	}else{
+		wp_enqueue_style('thickbox');
+		wp_enqueue_script('media-upload');
+		wp_enqueue_script('thickbox');
+	}
+	?>
+	<h1>Custom Block Settings</h1>
+
+	<form method="post" action="options.php">
+		<?php settings_fields('my_custom_block_settings_group_fields'); ?>
+		<?php $options = get_option('my_custom_blocks_option'); ?>
+
+		<!-- CONTACT DETAILS BLOCK -->
+		<div class="vision-mission section-block">
+			<h1>Contact Details Block</h1>
+			<div class="section-block-inner">
+				<table>
+					<tr>
+						<th>Email address</th>
+						<td>
+							<input class="co_email" type="text" name="my_custom_blocks_option[co][email]" size="60" value="<?php echo $options['co']['email']; ?>">
+						</td>
+					</tr>
+					<tr>
+						<th>Phone number</th>
+						<td><input class="co_phone" type="text" name="my_custom_blocks_option[co][phone]" size="60" value="<?php echo $options['co']['phone']; ?>"></td>
+					</tr>
+					<tr>
+						<th>Address</th>
+						<td><textarea name="my_custom_blocks_option[co][address]" cols="50" rows="5"><?php echo $options['co']['address'];?></textarea></td>
+					</tr>
+					<tr>
+						<th></th>
+						<td><input type="submit" class="button-primary" value="Save All"></td>
+					</tr>
+					<tr>
+						<td colspan="2"><hr></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><h2>Social Links</h2></td>
+					</tr>
+					<tr>
+						<th>Facebook</th>
+						<td><input class="so_fb" type="text" name="my_custom_blocks_option[so][fb]" size="60" value="<?php echo $options['so']['fb']; ?>"></td>
+					</tr>
+					<tr>
+						<th>Twitter</th>
+						<td><input class="so_tw" type="text" name="my_custom_blocks_option[so][tw]" size="60" value="<?php echo $options['so']['tw']; ?>"></td>
+					</tr>
+					<tr>
+						<th>LinkedIn</th>
+						<td><input class="so_li" type="text" name="my_custom_blocks_option[so][li]" size="60" value="<?php echo $options['so']['li']; ?>"></td>
+					</tr>
+					<tr>
+						<th>Instagram</th>
+						<td><input class="so_ig" type="text" name="my_custom_blocks_option[so][ig]" size="60" value="<?php echo $options['so']['ig']; ?>"></td>
+					</tr>
+					<tr>
+						<th>Pinterest</th>
+						<td><input class="so_pin" type="text" name="my_custom_blocks_option[so][pin]" size="60" value="<?php echo $options['so']['pin']; ?>"></td>
+					</tr>
+					<tr>
+						<th>YouTube</th>
+						<td><input class="so_yt" type="text" name="my_custom_blocks_option[so][yt]" size="60" value="<?php echo $options['so']['yt']; ?>"></td>
+					</tr>
+					<tr>
+						<th></th>
+						<td><input type="submit" class="button-primary" value="Save All"></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<!-- END CONTACT DETAILS BLOCK -->
+
+		<!-- GOOGLE CAPTCHA BLOCK -->
+		<div class="vision-mission section-block">
+			<h1>Google Captcha's Block</h1>
+			<div class="section-block-inner">
+				<table>
+					<tr>
+						<th>Site Key</th>
+						<td>
+							<input class="go_sitekey" type="text" name="my_custom_blocks_option[go][sitekey]" size="60" value="<?php echo $options['go']['sitekey']; ?>">
+						</td>
+					</tr>
+					<tr>
+						<th>Secret Key</th>
+						<td>
+							<input class="go_secretkey" type="text" name="my_custom_blocks_option[go][secretkey]" size="60" value="<?php echo $options['go']['secretkey']; ?>">
+						</td>
+					</tr>
+					<tr>
+						<th></th>
+						<td><input type="submit" class="button-primary" value="Save All"></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<!-- END GOOGLE CAPTCHA BLOCK -->
+
+	</form>
+	<style>
+		.info_span{
+			font-size: 14px;margin-top: -5px;display: block;
+		}
+		.section-block input[type="text"], .section-block textarea {
+			min-width: 500px;
+			margin: 0 0 10px;
+		}
+		.section-block textarea {
+			min-height: 100px;
+		}
+		.section-block table {
+			border-collapse: collapse;
+			width: 100%;
+		}
+		.section-block tr {
+			border-bottom: 20px solid transparent;
+		}
+		.section-block td, .section-block th {
+			padding-right: 30px;
+		}
+		.section-block td h2 {
+			font-weight: 700;
+		}
+		.section-block th {
+			text-align: right;
+			/*min-width: 130px;*/
+			max-width: 50px;
+			vertical-align: top;
+			padding-top: 5px;
+		}
+		.section-block-inner{
+			padding: 20px;
+		}
+		.section-block {
+			background: rgb(223, 235, 239);
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			box-sizing: border-box;
+			width: 95%;
+			margin: 30px 0;
+			-webkit-box-shadow: 0 0 3px rgba(35, 40, 45, 0.5);
+			-moz-box-shadow: 0 0 3px rgba(35, 40, 45, 0.5);
+			box-shadow: 0 0 3px rgba(35, 40, 45, 0.5);
+		}
+		.section-block h1 {
+			margin: 0 0 0;
+			background: #23282d;
+			color: #FFF;
+			line-height: 50px;
+			padding-left: 20px;
+			text-transform: uppercase;
+			font-size: 20px;
+		}
+		.section-block h3 {
+			margin-top: 0;
+		}
+	</style>
+	<?php
+}
+//End - Custom Block Setting Page
